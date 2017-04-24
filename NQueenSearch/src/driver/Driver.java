@@ -23,12 +23,19 @@ public class Driver{
 		System.out.println("Initial board setup is : ");
 		printBoard(initialBoard);
 		
-	    String inputString = javax.swing.JOptionPane.showInputDialog("Select the algorithm, enter: 1 = DFS, 2 = BFS, 3 = A*, 4 = IDS, 5 = IDA*");
-	    int choice = Integer.parseInt(inputString);
-	    
-	    solvedBoard = solve(choice, queens);
-		printBoard(solvedBoard);
-		
+		String numberOfTests = javax.swing.JOptionPane.showInputDialog("How many algorithms would you like to test?");
+		int numberOfTestsint = Integer.parseInt(numberOfTests);
+
+		String inputString;
+		int choice;
+
+		for(int i = 0; i < numberOfTestsint; i++){
+			inputString = javax.swing.JOptionPane.showInputDialog("Select the algorithm, enter: 1 = DFS, 2 = BFS, 3 = A*, 4 = IDS, 5 = IDA*");
+			choice = Integer.parseInt(inputString);
+			solvedBoard = solve(choice, queens);
+			printBoard(solvedBoard);
+		}
+
 	}
 	
 	private static boolean[][] solve(int choice, int[] queens)
@@ -37,30 +44,35 @@ public class Driver{
 		double time1 = 0, time2 = 0;
 		if(choice == 1)
 		{
+			System.out.println("DFS:");
 			time1 = System.currentTimeMillis();
 			searchClass = new DFS(queens);
 			time2 = System.currentTimeMillis();
 		}
 		if(choice == 2)
 		{
+			System.out.println("BFS:");
 			time1 = System.currentTimeMillis();
 			searchClass = new BFS(queens);
 			time2 = System.currentTimeMillis();
 		}
 		if(choice == 3)
 		{
+			System.out.println("AStar:");
 			time1 = System.currentTimeMillis();
 			searchClass = new AStar(queens);
 			time2 = System.currentTimeMillis();
 		}
 		if(choice == 4)
 		{
+			System.out.println("IDS");
 			time1 = System.currentTimeMillis();
 			searchClass = new IDS(queens);
 			time2 = System.currentTimeMillis();
 		}
 		if(choice == 5)
 		{
+			System.out.println("IDAStar:");
 			time1 = System.currentTimeMillis();
 			searchClass = new IDAStar(queens);
 			time2 = System.currentTimeMillis();

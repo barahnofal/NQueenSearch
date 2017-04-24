@@ -7,164 +7,141 @@ import nodes.Node;
 
 public class IDS extends Search {
 
+	Node root;
+	Stack<Node> stack;
+	Stack<Node> lastLevel;
+
 	public IDS(int[] position) {
+		stack = new Stack<Node>();
+		lastLevel = new Stack<Node>();
+		root = new Node(position);
 		check = new HashMap<Integer , Boolean>();
 		this.position = position;
-		this.solutionState = ids();
+		this.solutionState = search();
 
 	}
 
 
-	public boolean[][] ids() {
+	@Override
+	public boolean[][] search() {
 
-		Node root = new Node(position);
-		Stack<Node> stack = new Stack<Node>(); //Using a stack for DFS
-		stack.push(root);
+
+		insert(root);
 		check.put(index(root.getPosition()), true);
-		Node curentState = null;
-		int[] childposition;
+		Node currentState = null;
+		int[] child;
 		int depth = 0, limit = 2;
 		Node node;
-		
-		while (stack.isEmpty() == false) {
 
-			if(!(depth == limit))
+		while (isEmpty() == false) {
+
+			if(depth <= limit)
 			{
-				curentState = stack.pop();
-				depth++;
-				if (curentState.isSolved()) {
-					this.position = curentState.getPosition();
+				currentState = extract();
+				if (currentState.isSolved()) {
+					this.position = currentState.getPosition();
 					break;
 				}
 
-				position = curentState.getPosition();
+				position = currentState.getPosition();
 
 				for (int i = 0; i < Driver.QUEENS; i++) {
-					
-					childposition = position.clone();
-					if (childposition[i] == 0) { //At the leftmost column
-						childposition[i] = childposition[i] + 1;
-						if (!check.containsKey(index(childposition))) {
-							node = new Node(childposition);
+
+					child = position.clone();
+					if (child[i] == 0) { //At the leftmost column
+						child[i] = child[i] + 1;
+						if (!check.containsKey(index(child))) {
+							node = new Node(child);
 							if (node.isSolved()) {
 								position = node.getPosition();
 								return node.getState();
 							}
-							stack.push(node);
-							check.put(index(childposition), true);
+							insert(node);
+							check.put(index(child), true);
 						}
 
-					} else if (childposition[i] == (Driver.QUEENS - 1)) { //At the rightmost column
-						childposition[i] = childposition[i] - 1;
-						if (!check.containsKey(index(childposition))) {
-							node = new Node(childposition);
+					} else if (child[i] == (Driver.QUEENS - 1)) { //At the rightmost column
+						child[i] = child[i] - 1;
+						if (!check.containsKey(index(child))) {
+							node = new Node(child);
 							if (node.isSolved()) {
 								position = node.getPosition();
 								return node.getState();
 							}
-							stack.push(node);
-							check.put(index(childposition), true);
+							insert(node);
+							check.put(index(child), true);
 						}
 					} else { //Somewhere in the middle
-						childposition[i] = childposition[i] - 1;
-						if (!check.containsKey(index(childposition))) {
-							node = new Node(childposition);
+						child[i] = child[i] - 1;
+						if (!check.containsKey(index(child))) {
+							node = new Node(child);
 							if (node.isSolved()) {
 								position = node.getPosition();
 								return node.getState();
 							}
-							stack.push(node);
-							check.put(index(childposition), true);
+							insert(node);
+							check.put(index(child), true);
 
 						}
-						childposition = position.clone();
-						childposition[i] = childposition[i] + 1;
-						if (!check.containsKey(index(childposition))) {
+						child = position.clone();
+						child[i] = child[i] + 1;
+						if (!check.containsKey(index(child))) {
 
-							node = new Node(childposition);
+							node = new Node(child);
 							if (node.isSolved()) {
 								position = node.getPosition();
 								return node.getState();
 							}
-							stack.push(node);
-							check.put(index(childposition), true);
+							insert(node);
+							check.put(index(child), true);
 
 						}
 					}
-					childposition = position.clone();
+					child = position.clone();
+				}
+				depth++;
+			}
+
+			else{
+				while(!isEmpty())
+				{ //when the limit is reached, save the unexpanded nodes
+					currentState = extract();
+					lastLevel.push(currentState);
+					if (currentState.isSolved()) {
+						this.position = currentState.getPosition();
+						break;
+					}
 				}
 			}
-			else
-			{
-				curentState = stack.pop();
-				depth++;
-				if(limit < 10)
-					limit = limit+2;
-				
-				if (curentState.isSolved()) {
-					this.position = curentState.getPosition();
-					break;
-				}
-
-				position = curentState.getPosition();
-
-				for (int i = 0; i < Driver.QUEENS; i++) {
-					
-					childposition = position.clone();
-					if (childposition[i] == 0) { //At the leftmost column
-						childposition[i] = childposition[i] + 1;
-						if (!check.containsKey(index(childposition))) {
-							node = new Node(childposition);
-							if (node.isSolved()) {
-								position = node.getPosition();
-								return node.getState();
-							}
-							stack.push(node);
-							check.put(index(childposition), true);
-						}
-
-					} else if (childposition[i] == (Driver.QUEENS - 1)) { //At the rightmost column
-						childposition[i] = childposition[i] - 1;
-						if (!check.containsKey(index(childposition))) {
-							node = new Node(childposition);
-							if (node.isSolved()) {
-								position = node.getPosition();
-								return node.getState();
-							}
-							stack.push(node);
-							check.put(index(childposition), true);
-						}
-					} else { //Somewhere in the middle
-						childposition[i] = childposition[i] - 1;
-						if (!check.containsKey(index(childposition))) {
-							node = new Node(childposition);
-							if (node.isSolved()) {
-								position = node.getPosition();
-								return node.getState();
-							}
-							stack.push(node);
-							check.put(index(childposition), true);
-
-						}
-						childposition = position.clone();
-						childposition[i] = childposition[i] + 1;
-						if (!check.containsKey(index(childposition))) {
-
-							node = new Node(childposition);
-							if (node.isSolved()) {
-								position = node.getPosition();
-								return node.getState();
-							}
-							stack.push(node);
-							check.put(index(childposition), true);
-
-						}
-					}
-					childposition = position.clone();
+			if(!currentState.isSolved() && depth > limit)
+			{//if the solution wasn't found at the given limit, re-insert the last level into the collection and start expanding it
+				limit++;
+				while(!lastLevel.isEmpty()){
+					insert(lastLevel.pop());
 				}
 			}
 		}
-		return curentState.getState();
+		
+		return currentState.getState();
 	}
+
+	
+
+	@Override
+	public void insert(Node n) {
+		stack.push(n);
+
+	}
+
+	@Override
+	public Node extract() {
+		return (Node)stack.pop();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return (stack.isEmpty());
+	}
+
 
 }

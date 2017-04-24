@@ -8,88 +8,30 @@ import nodes.Node;
 
 public class BFS extends Search {
 
+	private Queue<Node> q;
+	
 	public BFS(int[] position) {
+		q = new LinkedList<Node>();
 		check = new HashMap<Integer , Boolean>();
 		this.position = position;
-		this.solutionState = bfs();
+		this.solutionState = search();
+	}
 
+	@Override
+	public void insert(Node n) {
+		q.add(n);
+	}
+
+	@Override
+	public Node extract() {
+		return q.poll();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return q.isEmpty();
 	}
 	
 	
-	public boolean[][] bfs() {
-
-		Node root = new Node(position);
-		Queue<Node> queue = new LinkedList<Node>(); //Using a queue for DFS
-		queue.add(root);
-		check.put(index(root.getPosition()), true);
-		Node curentState = null;
-		while (queue.isEmpty() == false) {
-
-			curentState = queue.poll();
-			if (curentState.isSolved()) {
-				this.position = curentState.getPosition();
-				break;
-			}
-
-			position = curentState.getPosition();
-
-			for (int i = 0; i < Driver.QUEENS; i++) {
-				Node node;
-				int[] childposition = position.clone();
-				if (childposition[i] == 0) { //At the leftmost column
-
-					childposition[i] = childposition[i] + 1;
-					if (!check.containsKey(index(childposition))) {
-						node = new Node(childposition);
-						if (node.isSolved()) {
-							position = node.getPosition();
-							return node.getState();
-						}
-						queue.add(node);
-						check.put(index(childposition), true);
-					}
-
-				} else if (childposition[i] == (Driver.QUEENS - 1)) { //At the rightmost column
-					childposition[i] = childposition[i] - 1;
-					if (!check.containsKey(index(childposition))) {
-						node = new Node(childposition);
-						if (node.isSolved()) {
-							position = node.getPosition();
-							return node.getState();
-						}
-						queue.add(node);
-						check.put(index(childposition), true);
-					}
-				} else { //Somewhere in the middle
-					childposition[i] = childposition[i] - 1;
-					if (!check.containsKey(index(childposition))) {
-						node = new Node(childposition);
-						if (node.isSolved()) {
-							position = node.getPosition();
-							return node.getState();
-						}
-						queue.add(node);
-						check.put(index(childposition), true);
-
-					}
-					childposition = position.clone();
-					childposition[i] = childposition[i] + 1;
-					if (!check.containsKey(index(childposition))) {
-
-						node = new Node(childposition);
-						if (node.isSolved()) {
-							position = node.getPosition();
-							return node.getState();
-						}
-						queue.add(node);
-						check.put(index(childposition), true);
-
-					}
-				}
-				childposition = position.clone();
-			}
-		}
-
-		return curentState.getState();
-	}
+	
 }

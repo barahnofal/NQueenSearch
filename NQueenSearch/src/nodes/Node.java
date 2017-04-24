@@ -2,7 +2,7 @@ package nodes;
 import driver.Driver;
 
 
-public  class Node {
+public  class Node implements Comparable<Node>{
 
 	public boolean[][] state = new boolean[Driver.QUEENS][Driver.QUEENS];
 	public int[] position;
@@ -84,7 +84,7 @@ public  class Node {
 					count++;
 			}
 
-			// sw
+
 			int posOfI = i + 1;
 			for (int j = truePosition + 1; j < state.length && posOfI < state.length; j++) {
 				if (state[posOfI][j] == true) 
@@ -93,7 +93,6 @@ public  class Node {
 				posOfI++;
 			}
 
-			// SE
 			posOfI = 0;
 			posOfI = i + 1;
 			for (int j = truePosition - 1; j >= 0 && posOfI < state.length; j--) {
@@ -103,11 +102,18 @@ public  class Node {
 				posOfI++;
 
 			}
-
 		}
 
 		return count;
 	}
 
-	
+	public int compareTo(Node node2) {
+		if(this.countConflicts() > node2.countConflicts())
+			return 1;
+		else if(this.countConflicts() < node2.countConflicts())
+			return -1;
+		else
+			return 0;
+		
+	}
 }
